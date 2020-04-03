@@ -22,7 +22,6 @@ To generate a rotation with 10 matches using only showdown for each match:
 ```
 generator.py -n=10 -t=[0] 
 ```
-```
 To generate a rotation with 7 matches using only Brawl Ball and Bounty for each match, where each match should randomly start with Brawl Ball or Bounty:
 ```
 generator.py -n=10 -t=[3,4] --shuffle
@@ -45,7 +44,7 @@ where `T` is a list of the form `[t1,t2,...,tn]` where `t1,t2,...,tn` are number
 | 5 | Siege | 
 | 6 | Robo Rumble | 
 | 7 | Big Game | 
-[ 8 | Boss Fight |
+| 8 | Boss Fight |
 
 
 ### License
