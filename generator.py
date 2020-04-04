@@ -249,7 +249,7 @@ def generate(text):
 
 
 
-TOKEN = 'Njk1OTg0NjQ1NTI2NzgxOTYy.XojVdQ.h1yE-Hycc_v6BfHcx8kMLRIz43k'
+TOKEN = sys.argv[1]
 
 client = discord.Client()	
 @client.event
