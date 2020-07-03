@@ -13,27 +13,27 @@ keepOrder = False
 separate = False
 
 # All Maps by Game Type
-gameTypes = ["Solo Showdown","Duo Showdown","Gem Grab","Heist","Bounty","Brawl Ball","Siege","Robo Rumble","Big Game","Boss Fight"]
-maps = [[],[],[],[],[],[],[],[],[],[]]
+gameTypes = ["Solo Showdown","Duo Showdown","Gem Grab","Heist","Bounty","Brawl Ball","Siege","Hot Zone","Super City Rampage","Robo Rumble","Big Game","Boss Fight"]
+maps = [[],[],[],[],[],[],[],[],[],[],[],[]]
 
 # Game Type Sequence
 
 validArguments = "Valid arguments are:\n"
-validArguments = validArguments + "\t**xN** where N is the number (1,2,...) of matches to generate.\n"
-validArguments = validArguments + "\t**seed [someSeed]** to set the random seed. Keeping all other arguments \n"
-validArguments = validArguments + "\t\tas they are, the same seed will always yield the same \"random\" results.\n"
-validArguments = validArguments + "\t**praise** to praise the current most skilled Brawl Stars player and your matches shall be blessed.\n"
-validArguments = validArguments + "\t**shuffle** to shuffle the game types within each match randomly.\n"
-validArguments = validArguments + "\t**separate** to additionally print the map sequence separated by game types.\n"
-validArguments = validArguments + "\t**keep order**: If all maps available for a certain game type are already used,\n"
-validArguments = validArguments + "\t\tthe maps will be used again in the exact same order starting over from the beginning.\n"
-validArguments = validArguments + "\t\tBy default this order might be changed slightly.\n"
-validArguments = validArguments + "\t**explain** to additionally print an explanation of the arguments used to generate the map sequence.\n"
+validArguments = validArguments + "\t• ``xN`` where N is the number (1,2,...) of matches to generate.\n"
+validArguments = validArguments + "\t• ``seed [someSeed]`` to set the random seed. Keeping all other arguments \n"
+validArguments = validArguments + "\t\t\tas they are, the same seed will always yield the same \"random\" results.\n"
+validArguments = validArguments + "\t• ``praise`` to praise the current most skilled Brawl Stars player and your matches shall be blessed.\n"
+validArguments = validArguments + "\t• ``shuffle`` to shuffle the game types within each match randomly.\n"
+validArguments = validArguments + "\t• ``separate`` to additionally print the map sequence separated by game types.\n"
+validArguments = validArguments + "\t• ``keep order``: If all maps available for a certain game type are already used,\n"
+validArguments = validArguments + "\t\t\tthe maps will be used again in the exact same order starting over from the beginning.\n"
+validArguments = validArguments + "\t\t\tBy default this order might be changed slightly.\n"
+validArguments = validArguments + "\t• ``explain`` to additionally print an explanation of the arguments used to generate the map sequence.\n"
 
-validGameTypes = "Valid game types are **Solo Showdown, Duo Showdown, Gem Grab, Heist, Bounty, Brawl Ball, Siege, Robo Rumble, Big Game** and **Boss Fight**.\n Instead you could also use the numbers **0, 1, 2, 3, 4, 5, 6, 7, 8** and **9** respectively.\n"
+validGameTypes = "Valid game types are ``Solo Showdown, Duo Showdown, Gem Grab, Heist, Bounty, Brawl Ball, Siege, Hot Zone, Super City Rampage, Robo Rumble, Big Game`` and ``Boss Fight``.\n Instead you could also use the numbers ``0, 1, ..., 11`` respectively.\n"
 
 helpText = "If you tell me a list of game types, i will give you a random list of maps for one or more matches, where each match consists of games with the types you told me.\n"
-helpText = helpText + "Type \"<maps LIST | ARGUMENTS\" Where LIST contains the comma separated game types and then (optionally) a \"|\" symbol followed by a comma separated list of arguments.\n" + validGameTypes + validArguments
+helpText = helpText + "Type `<maps LIST | ARGUMENTS` Where `LIST` contains the comma separated game types and then (optionally) a `|` symbol followed by a comma separated list of arguments.\n" + validGameTypes + validArguments
 
 
 class BSMapExtracter(HTMLParser):
@@ -70,7 +70,7 @@ class BSMapExtracter(HTMLParser):
 
 def getMaps():
 	global maps 
-	maps = [[],[],[],[],[],[],[],[],[],[]]
+	maps = [[],[],[],[],[],[],[],[],[],[],[],[]]
 	#req = urllib2.Request('https://www.starlist.pro/maps/')
 	#req.add_header('User-Agent', 'nodeenv/1.0 (https://github.com/ekalinin/nodeenv)')
 	#r = urllib2.urlopen(req)
@@ -145,7 +145,7 @@ def generate(text):
 					except ValueError:
 						return "Could'nt understand \"" + text[0][i] + "\". Did you mean xN where N is a number 1,2,...?"
 				elif SequenceMatcher(None, arg[0:3],"seed").ratio() > 0.8:
-					np.random.seed(hash(text[1][i].replace(" ","")[4:])%sys.maxsize)
+					np.random.seed(hash(text[1][i].replace(" ","")[4:])%2**32)
 					seed = text[1][i].replace(" ","")[4:]
 				elif SequenceMatcher(None, arg,"praise").ratio() > 0.8:
 					out = out + "\n" + np.random.choice(["Keep in mind: ","It just cannot be said frequently enough: ","Just in case you forgot: "], 1)[0] + "\n\t" + np.random.choice(["Stoanei is simply the best.","Stoanei rules.","Roses are red, violets are blue, Stoanei's the best and you know it's true."], 1)[0] + "\n"
@@ -191,7 +191,7 @@ def generate(text):
 		probs.append(np.ones(len(maps[i])))
 
 	# init map list for each game type
-	typeSequences = [[],[],[],[],[],[],[],[],[]]
+	typeSequences = [[],[],[],[],[],[],[],[],[],[],[],[]]
 	if keepOrder:
 		nextForType = [np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0]),np.array([0])]
 	else:
@@ -261,7 +261,6 @@ async def on_message(message):
 	if message.author == client.user:
 		return
 	if message.content.startswith('<maps'):
-		print(message.content)
 		msg = generate(message.content[5:])
 		msg = msg.format(message)
 		await message.channel.send(msg)
