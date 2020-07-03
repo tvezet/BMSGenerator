@@ -5,6 +5,7 @@ import numpy as np
 #import urllib2
 from six.moves import urllib 
 import sys
+import os
 #from HTMLParser import HTMLParser
 from html.parser import HTMLParser
 
@@ -12,8 +13,8 @@ keepOrder = False
 separate = False
 
 # All Maps by Game Type
-gameTypes = ["Showdown","Gem Grab","Heist","Bounty","Brawl Ball","Siege","Robo Rumble","Big Game","Boss Fight"]
-maps = [[],[],[],[],[],[],[],[],[]]
+gameTypes = ["Solo Showdown","Duo Showdown","Gem Grab","Heist","Bounty","Brawl Ball","Siege","Robo Rumble","Big Game","Boss Fight"]
+maps = [[],[],[],[],[],[],[],[],[],[]]
 
 # Game Type Sequence
 
@@ -29,10 +30,10 @@ validArguments = validArguments + "\t\tthe maps will be used again in the exact 
 validArguments = validArguments + "\t\tBy default this order might be changed slightly.\n"
 validArguments = validArguments + "\t**explain** to additionally print an explanation of the arguments used to generate the map sequence.\n"
 
-validGameTypes = "Valid game types are **Showdown, Gem Grab, Heist, Bounty, Brawl Ball, Siege, Robo Rumble, Big Game** and **Boss Fight**.\n Instead you could also use the numbers **0, 1, 2, 3, 4, 5, 6, 7** and **8** respectively.\n"
+validGameTypes = "Valid game types are **Solo Showdown, Duo Showdown, Gem Grab, Heist, Bounty, Brawl Ball, Siege, Robo Rumble, Big Game** and **Boss Fight**.\n Instead you could also use the numbers **0, 1, 2, 3, 4, 5, 6, 7, 8** and **9** respectively.\n"
 
 helpText = "If you tell me a list of game types, i will give you a random list of maps for one or more matches, where each match consists of games with the types you told me.\n"
-helpText = helpText + "Type \"!maps LIST | ARGUMENTS\" Where LIST contains the comma separated game types and then (optionally) a \"|\" symbol followed by a comma separated list of arguments.\n" + validGameTypes + validArguments
+helpText = helpText + "Type \"<maps LIST | ARGUMENTS\" Where LIST contains the comma separated game types and then (optionally) a \"|\" symbol followed by a comma separated list of arguments.\n" + validGameTypes + validArguments
 
 
 class BSMapExtracter(HTMLParser):
@@ -69,7 +70,7 @@ class BSMapExtracter(HTMLParser):
 
 def getMaps():
 	global maps 
-	maps = [[],[],[],[],[],[],[],[],[]]
+	maps = [[],[],[],[],[],[],[],[],[],[]]
 	#req = urllib2.Request('https://www.starlist.pro/maps/')
 	#req.add_header('User-Agent', 'nodeenv/1.0 (https://github.com/ekalinin/nodeenv)')
 	#r = urllib2.urlopen(req)
@@ -249,14 +250,18 @@ def generate(text):
 
 
 
-TOKEN = sys.argv[1]
+if len(sys.argv) > 1:
+	TOKEN = sys.argv[1]
+else:
+	TOKEN = os.environ["ACCESS_TOKEN"]
 
 client = discord.Client()	
 @client.event
 async def on_message(message):
 	if message.author == client.user:
 		return
-	if message.content.startswith('!maps'):
+	if message.content.startswith('<maps'):
+		print(message.content)
 		msg = generate(message.content[5:])
 		msg = msg.format(message)
 		await message.channel.send(msg)
